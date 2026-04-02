@@ -1,0 +1,33 @@
+{
+  "name": "chaudhri-clicks",
+  "version": "1.0.0",
+  "description": "Photography portfolio with a protected admin panel, Express backend, and MongoDB persistence.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "check": "node --check server.js && node --check server/app.js && node --check server/controllers/siteController.js && node --check server/controllers/pricingController.js && node --check server/config/seedDefaults.js && node --check client/public/scripts/site.js && node --check client/public/scripts/admin.js && node --check client/public/scripts/admin-login.js"
+  },
+  "keywords": [
+    "express",
+    "mongodb",
+    "photography",
+    "admin-panel"
+  ],
+  "author": "",
+  "license": "ISC",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "mongoose": "^8.9.5",
+    "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}

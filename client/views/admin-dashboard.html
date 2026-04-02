@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chaudhri Clicks Admin Dashboard</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/admin.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="admin-dashboard-body">
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <div>
+                <p class="eyebrow">Control Center</p>
+                <h1>Chaudhri Clicks</h1>
+                <p class="sidebar-copy">Update the public website without touching code.</p>
+            </div>
+            <nav class="sidebar-nav">
+                <button type="button" class="sidebar-link active" data-section-target="dashboard">Dashboard</button>
+                <button type="button" class="sidebar-link" data-section-target="categories">Categories</button>
+                <button type="button" class="sidebar-link" data-section-target="portfolio">Portfolio</button>
+                <button type="button" class="sidebar-link" data-section-target="pricing">Pricing</button>
+                <button type="button" class="sidebar-link" data-section-target="content">Content</button>
+                <button type="button" class="sidebar-link" data-section-target="leads">Leads</button>
+                <button type="button" class="sidebar-link" data-section-target="testimonials">Testimonials</button>
+                <button type="button" class="sidebar-link" data-section-target="settings">Settings</button>
+            </nav>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-topbar">
+                <div>
+                    <p class="eyebrow">Protected Route</p>
+                    <h2>Admin Dashboard</h2>
+                </div>
+                <div class="topbar-actions">
+                    <a href="/" class="ghost-btn" target="_blank" rel="noopener noreferrer">Open Website</a>
+                    <button id="logoutButton" type="button" class="ghost-btn">Logout</button>
+                </div>
+            </header>
+
+            <p id="adminNotice" class="notice" aria-live="polite"></p>
+
+            <section id="dashboardSection" class="admin-section visible">
+                <div class="section-header">
+                    <div>
+                        <p class="eyebrow">Overview</p>
+                        <h3>Website Snapshot</h3>
+                    </div>
+                </div>
+                <div id="dashboardStats" class="stats-grid"></div>
+                <div class="panel">
+                    <div class="panel-header">
+                        <h4>Recent Leads</h4>
+                    </div>
+                    <div class="table-shell">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Phone</th>
+                                    <th>Event</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboardRecentLeads"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="categoriesSection" class="admin-section">
+                <div class="section-header">
+                    <div>
+                        <p class="eyebrow">Portfolio Structure</p>
+                        <h3>Category Management</h3>
+                    </div>
+                </div>
+                <div class="management-grid two-column">
+                    <form id="categoryForm" class="panel form-panel">
+                        <input type="hidden" id="categoryId">
+                        <div class="panel-header">
+                            <h4>Add or Edit Category</h4>
+                        </div>
+                        <div class="form-field">
+                            <label for="categoryName">Category name</label>
+                            <input type="text" id="categoryName" placeholder="Wedding" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="primary-btn">Save Category</button>
+                            <button type="button" id="categoryReset" class="ghost-btn">Clear</button>
+                        </div>
+                    </form>
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h4>Existing Categories</h4>
+                        </div>
+                        <div class="table-shell">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Slug</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="categoryTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="portfolioSection" class="admin-section">
+                <div class="section-header">
+                    <div>
+                        <p class="eyebrow">Gallery Control</p>
+                        <h3>Portfolio Management</h3>
+                    </div>
+                </div>
+                <div class="management-grid two-column">
+                    <form id="portfolioForm" class="panel form-panel">
+                        <input type="hidden" id="portfolioId">
+                        <div class="panel-header">
+                            <h4>Add or Edit Image</h4>
+                        </div>
+                        <div class="form-field">
+                            <label for="portfolioTitle">Image title</label>
+                            <input type="text" id="portfolioTitle" placeholder="Golden Hour Promise" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="portfolioCategory">Category</label>
+                            <select id="portfolioCategory" required></select>
+                        </div>
+                        <div class="form-field">
+                            <label for="portfolioImage">Upload image</label>
+                            <input type="file" id="portfolioImage" accept="image/*">
+                            <small>Required for new items. Optional when editing.</small>
+                        </div>
+                        <div id="portfolioPreview" class="image-preview"></div>
+                        <div class="form-actions">
+                            <button type="submit" class="primary-btn">Save Portfolio Item</button>
+                            <button type="button" id="portfolioReset" class="ghost-btn">Clear</button>
+                        </div>
+                    </form>
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h4>Current Gallery</h4>
+                        </div>
+                        <div id="portfolioList" class="portfolio-admin-list"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="pricingSection" class="admin-section">
+                <div class="section-header">
+                    <div>
+                        <p class="eyebrow">Revenue Control</p>
+                        <h3>Pricing Management</h3>
+                    </div>
+                </div>
+                <div class="management-grid two-column">
+                    <form id="pricingForm" class="panel form-panel">
+                        <input type="hidden" id="pricingId">
+                        <div class="panel-header">
+                            <h4>Add or Edit Pricing Plan</h4>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label for="pricingPlanTitle">Plan name</label>
+                                <input type="text" id="pricingPlanTitle" placeholder="Premium" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="pricingPlanPrice">Price</label>
+                                <input type="text" id="pricingPlanPrice" placeholder="INR 24,999" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="pricingPlanButton">Button label</label>
+                                <input type="text" id="pricingPlanButton" placeholder="Choose Plan">
+                            </div>
+                            <div class="form-field">
+                                <label for="pricingPlanOrder">Display order</label>
+                                <input type="number" id="pricingPlanOrder" min="1" placeholder="1">
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label for="pricingPlanFeatures">Features (one per line)</label>
+                            <textarea id="pricingPlanFeatures" rows="6" placeholder="Full Day Coverage&#10;500+ Edited Photos&#10;Handcrafted Album" required></textarea>
+                        </div>
+                        <div class="inline-toggle">
+                            <input type="checkbox" id="pricingPlanFeatured">
+                            <label for="pricingPlanFeatured">Highlight as Most Popular</label>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="primary-btn">Save Pricing Plan</button>
+                            <button type="button" id="pricingReset" class="ghost-btn">Clear</button>
+                        </div>
+                    </form>
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h4>Current Pricing Plans</h4>
+                        </div>
+                        <div id="pricingList" class="pricing-admin-list"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="contentSection" class="admin-section">
+                <div class="section-header">
+                    <div>
+                        <p class="eyebrow">Live Copy</p>
+                        <h3>Content Management</h3>
+                    </div>
+                </div>
+                <form id="contentForm" class="panel form-panel">
+                    <div class="form-block">
+                        <h4>Hero Section</h4>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label for="heroEyebrow">Eyebrow</label>
+                                <input type="text" id="heroEyebrow" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="heroTitleLineOne">Main title</label>
+                                <input type="text" id="heroTitleLineOne" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="heroTitleAccent">Accent line</label>
+                                <input type="text" id="heroTitleAccent" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="heroBackgroundImage">Background image URL</label>
+                                <input type="url" id="heroBackgroundImage" required>
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label for="heroDescription">Description</label>
+                            <textarea id="heroDescription" rows="3" required></textarea>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label for="heroPrimaryCta">Primary button label</label>
+                                <input type="text" id="heroPrimaryCta" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="heroSecondaryCta">Secondary button label</label>
+                                <input type="text" id="heroSecondaryCta" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-block">
+                        <h4>About Section</h4>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label for="aboutEyebrow">Eyebrow</label>
+                                <input type="text" id="aboutEyebrow" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="aboutTitle">Title</label>
+                                <input type="text" id="aboutTitle" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="aboutImage">Portrait image URL</label>
+                                <input type="url" id="aboutImage" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="aboutCtaLabel">CTA button label</label>
+                                <input type="text" id="aboutCtaLabel" required>
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label for="aboutDescriptionOne">Paragraph one</label>
+                            <textarea id="aboutDescriptionOne" rows="3" required></textarea>
+                        </div>
+                        <div class="form-field">
+                            <label for="aboutDescriptionTwo">Paragraph two</label>
+                            <textarea id="aboutDescriptionTwo" rows="3" required></textarea>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label for="aboutStatOneValue">Stat one value</label>
+                                <input type="text" id="aboutStatOneValue" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="aboutStatOneLabel">Stat one label</label>
+                                <input type="text" id="aboutStatOneLabel" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="aboutStatTwoValue">Stat two value</label>
+                                <input type="text" id="aboutStatTwoValue" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="aboutStatTwoLabel">Stat two label</label>
+                                <input type="text" id="aboutStatTwoLabel" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-block">
+                        <h4>Contact Intro</h4>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label for="contactEyebrow">Eyebrow</label>
+                                <input type="text" id="contactEyebrow" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="contactTitle">Title</label>
+                                <input type="text" id="contactTitle" required>
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label for="contactDescription">Description</label>
+                            <textarea id="contactDescription" rows="3" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="primary-btn">Save Content</button>
+                    </div>
+                </form>
+            </section>
+
+            <section id="leadsSection" class="admin-section">
+                <div class="section-header">
+                    <div>
+                        <p class="eyebrow">Customer Pipeline</p>
+                        <h3>Contact Leads</h3>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header">
+                        <h4>Lead Inbox</h4>
+                    </div>
+                    <div class="table-shell">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Phone</th>
+                                    <th>Event</th>
+                                    <th>Date</th>
+                                    <th>Message</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leadsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="testimonialsSection" class="admin-section">
+                <div class="section-header">
+                    <div>
+                        <p class="eyebrow">Social Proof</p>
+                        <h3>Testimonials</h3>
+                    </div>
+                </div>
+                <div class="management-grid two-column">
+                    <form id="testimonialForm" class="panel form-panel">
+                        <input type="hidden" id="testimonialId">
+                        <div class="panel-header">
+                            <h4>Add or Edit Testimonial</h4>
+                        </div>
+                        <div class="form-field">
+                            <label for="testimonialQuote">Quote</label>
+                            <textarea id="testimonialQuote" rows="5" required></textarea>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label for="testimonialAuthor">Author</label>
+                                <input type="text" id="testimonialAuthor" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="testimonialRole">Role</label>
+                                <input type="text" id="testimonialRole">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="primary-btn">Save Testimonial</button>
+                            <button type="button" id="testimonialReset" class="ghost-btn">Clear</button>
+                        </div>
+                    </form>
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h4>Published Testimonials</h4>
+                        </div>
+                        <div id="testimonialList" class="testimonial-admin-list"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="settingsSection" class="admin-section">
+                <div class="section-header">
+                    <div>
+                        <p class="eyebrow">Business Details</p>
+                        <h3>Settings</h3>
+                    </div>
+                </div>
+                <form id="settingsForm" class="panel form-panel">
+                    <div class="form-block">
+                        <h4>Contact Information</h4>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label for="settingsPhone">Phone</label>
+                                <input type="text" id="settingsPhone" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="settingsEmail">Email</label>
+                                <input type="email" id="settingsEmail" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="settingsLocation">Location</label>
+                                <input type="text" id="settingsLocation" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="settingsWhatsapp">WhatsApp number</label>
+                                <input type="text" id="settingsWhatsapp" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-block">
+                        <h4>Brand Copy</h4>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label for="settingsInstagramHandle">Instagram handle</label>
+                                <input type="text" id="settingsInstagramHandle" required>
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label for="settingsBrandDescription">Footer description</label>
+                            <textarea id="settingsBrandDescription" rows="3" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-block">
+                        <h4>Social Links</h4>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label for="settingsInstagram">Instagram URL</label>
+                                <input type="url" id="settingsInstagram" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="settingsFacebook">Facebook URL</label>
+                                <input type="url" id="settingsFacebook" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="primary-btn">Save Settings</button>
+                    </div>
+                </form>
+            </section>
+        </main>
+    </div>
+    <script src="/scripts/admin.js"></script>
+</body>
+</html>

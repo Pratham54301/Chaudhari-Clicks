@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chaudhari Clicks Admin Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/admin.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="admin-login-body">
+    <main class="auth-shell">
+        <section class="auth-panel">
+            <div class="auth-brand">
+                <span class="eyebrow">Hidden Admin Access</span>
+                <h1>Chaudhari Clicks</h1>
+                <p>Sign in to manage categories, portfolio work, live content, leads, testimonials, and business settings.</p>
+            </div>
+            <form id="loginForm" class="auth-form">
+                <div class="form-field">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" value="Admin" autocomplete="username" required>
+                </div>
+                <div class="form-field">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" value="Admin" autocomplete="current-password" required>
+                </div>
+                <button type="submit" class="primary-btn">Login to Admin</button>
+                <p id="loginMessage" class="status-text" aria-live="polite"></p>
+            </form>
+        </section>
+    </main>
+    <script src="/scripts/admin-login.js"></script>
+</body>
+</html>

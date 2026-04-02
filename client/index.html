@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chaudhri Clicks | Premium Photography Portfolio</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="/styles/site.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div id="loader" class="loader">
+        <div class="loader-orb">
+            <div class="loader-ring"></div>
+            <div class="loader-ring delayed"></div>
+            <i data-lucide="camera" class="gold-text"></i>
+            <p>Chaudhri Clicks</p>
+        </div>
+    </div>
+
+    <nav id="navbar" class="site-nav">
+        <div class="container nav-inner">
+            <a href="#home" class="logo">
+                <i data-lucide="camera" class="gold-text"></i>
+                <span>Chaudhri <span class="gold-text">Clicks</span></span>
+            </a>
+            <button id="mobileToggle" class="mobile-toggle" type="button" aria-label="Toggle navigation">
+                <i data-lucide="menu"></i>
+            </button>
+            <div id="navMenu" class="nav-menu">
+                <a href="#home">Home</a>
+                <a href="#portfolio">Portfolio</a>
+                <a href="#about">About</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#contact">Contact</a>
+                <a href="#contact" class="nav-cta">Book Now</a>
+            </div>
+        </div>
+    </nav>
+
+    <header id="home" class="hero">
+        <div class="hero-media">
+            <img id="heroBackground" src="" alt="Photography hero background">
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="container hero-content">
+            <p id="heroEyebrow" class="eyebrow gold-text reveal"></p>
+            <h1 class="reveal">
+                <span id="heroTitleLineOne"></span><br>
+                <em id="heroTitleAccent"></em>
+            </h1>
+            <p id="heroDescription" class="hero-copy reveal"></p>
+            <div class="hero-actions reveal">
+                <a id="heroPrimaryCta" class="primary-btn" href="#portfolio"></a>
+                <a id="heroSecondaryCta" class="ghost-btn light" href="#contact"></a>
+            </div>
+        </div>
+    </header>
+
+    <section id="portfolio" class="section-space">
+        <div class="container">
+            <div class="section-heading center">
+                <p class="eyebrow gold-text reveal">Our Gallery</p>
+                <h2 class="reveal">Selected Works</h2>
+            </div>
+            <div id="categoryFilters" class="filter-row reveal"></div>
+            <div id="portfolioGrid" class="portfolio-grid"></div>
+        </div>
+    </section>
+
+    <section id="about" class="section-space alt-surface">
+        <div class="container about-grid">
+            <div class="about-image reveal">
+                <img id="aboutImage" src="" alt="Photographer portrait">
+            </div>
+            <div class="about-copy reveal">
+                <p id="aboutEyebrow" class="eyebrow gold-text"></p>
+                <h2 id="aboutTitle"></h2>
+                <p id="aboutDescriptionOne" class="muted-text"></p>
+                <p id="aboutDescriptionTwo" class="muted-text"></p>
+                <div id="aboutStats" class="about-stats"></div>
+                <a id="aboutCta" class="ghost-btn" href="#portfolio"></a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-space highlight-panel">
+        <div class="container">
+            <div class="section-heading center">
+                <p class="eyebrow gold-text reveal">Motion</p>
+                <h2 class="reveal">Wedding Highlights</h2>
+            </div>
+            <div class="highlight-video reveal">
+                <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop" alt="Wedding highlight" loading="lazy" decoding="async">
+                <div class="play-badge">
+                    <i data-lucide="play"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing" class="section-space">
+        <div class="container">
+            <div class="section-heading center">
+                <p id="pricingEyebrow" class="eyebrow gold-text reveal"></p>
+                <h2 id="pricingTitle" class="reveal"></h2>
+            </div>
+            <div id="pricingGrid" class="pricing-grid"></div>
+        </div>
+    </section>
+
+    <section class="section-space alt-surface testimonial-surface">
+        <div class="container">
+            <div class="testimonial-shell">
+                <div id="testimonialSlider" class="testimonial-track"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="section-space">
+        <div class="container contact-grid">
+            <div class="contact-copy reveal">
+                <p id="contactEyebrow" class="eyebrow gold-text"></p>
+                <h2 id="contactTitle"></h2>
+                <p id="contactDescription" class="muted-text"></p>
+
+                <div class="contact-stack">
+                    <div class="contact-card">
+                        <div class="icon-shell">
+                            <i data-lucide="phone" class="gold-text"></i>
+                        </div>
+                        <div>
+                            <span>Call Us</span>
+                            <a id="contactPhone" class="contact-link" href="#"></a>
+                        </div>
+                    </div>
+                    <div class="contact-card">
+                        <div class="icon-shell">
+                            <i data-lucide="mail" class="gold-text"></i>
+                        </div>
+                        <div>
+                            <span>Email Us</span>
+                            <a id="contactEmail" class="contact-link" href="#"></a>
+                        </div>
+                    </div>
+                    <div class="contact-card">
+                        <div class="icon-shell">
+                            <i data-lucide="map-pin" class="gold-text"></i>
+                        </div>
+                        <div>
+                            <span>Location</span>
+                            <p id="contactLocation"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form id="bookingForm" class="booking-form reveal">
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" placeholder="+91 70968 63912" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="eventType">Event Type</label>
+                        <select id="eventType" name="eventType" required></select>
+                    </div>
+                    <div class="form-field">
+                        <label for="eventDate">Date</label>
+                        <input type="date" id="eventDate" name="eventDate" required>
+                    </div>
+                </div>
+                <div class="form-field">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="5" placeholder="Tell us about your shoot..."></textarea>
+                </div>
+                <button id="bookingSubmit" type="submit" class="primary-btn full-width">Send Inquiry</button>
+            </form>
+        </div>
+    </section>
+
+    <section class="instagram-strip">
+        <div class="container center instagram-header">
+            <a id="instagramHandleLink" class="instagram-handle" href="#" target="_blank" rel="noopener noreferrer"></a>
+        </div>
+        <div class="instagram-grid">
+            <div class="instagram-item"><img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=400&auto=format&fit=crop" alt="Instagram sample one" loading="lazy" decoding="async"></div>
+            <div class="instagram-item"><img src="https://images.unsplash.com/photo-1531746020798-e795c5399c5c?q=80&w=400&auto=format&fit=crop" alt="Instagram sample two" loading="lazy" decoding="async"></div>
+            <div class="instagram-item"><img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=400&auto=format&fit=crop" alt="Instagram sample three" loading="lazy" decoding="async"></div>
+            <div class="instagram-item"><img src="https://images.unsplash.com/photo-1520854221256-17451cc331bf?q=80&w=400&auto=format&fit=crop" alt="Instagram sample four" loading="lazy" decoding="async"></div>
+            <div class="instagram-item"><img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=400&auto=format&fit=crop" alt="Instagram sample five" loading="lazy" decoding="async"></div>
+            <div class="instagram-item"><img src="https://images.unsplash.com/photo-1492707892479-7bc8d5a4ee93?q=80&w=400&auto=format&fit=crop" alt="Instagram sample six" loading="lazy" decoding="async"></div>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div>
+                <a href="#home" class="logo">
+                    <i data-lucide="camera" class="gold-text"></i>
+                    <span>Chaudhri <span class="gold-text">Clicks</span></span>
+                </a>
+                <p id="footerDescription" class="muted-text footer-copy"></p>
+                <div class="social-row">
+                    <a id="footerFacebook" href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                        <i class="fa-brands fa-facebook-f" aria-hidden="true"></i>
+                    </a>
+                    <a id="footerInstagram" href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+                    </a>
+                    <a id="footerWhatsapp" href="#" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+                        <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </div>
+            <div>
+                <h3>Explore</h3>
+                <div class="footer-links">
+                    <a href="#home">Home</a>
+                    <a href="#portfolio">Gallery</a>
+                    <a href="#about">Our Story</a>
+                    <a href="#contact">Booking</a>
+                </div>
+            </div>
+            <div>
+                <h3>Contact</h3>
+                <div class="footer-links">
+                    <a id="footerPhone" href="#contact"></a>
+                    <a id="footerEmail" href="#contact"></a>
+                    <a id="footerLocation" href="#contact"></a>
+                </div>
+            </div>
+        </div>
+        <div class="container footer-base">
+            <p id="footerYear"></p>
+        </div>
+    </footer>
+
+    <div id="lightbox" class="lightbox">
+        <button id="closeLightbox" class="lightbox-close" type="button" aria-label="Close image">
+            <i data-lucide="x"></i>
+        </button>
+        <img id="lightboxImage" src="" alt="Expanded portfolio image">
+    </div>
+
+    <a id="whatsappLink" class="whatsapp-float" href="#" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+        <i data-lucide="message-circle"></i>
+    </a>
+
+    <div id="siteToast" class="site-toast" aria-live="polite"></div>
+
+    <script src="/scripts/site.js"></script>
+</body>
+</html>
