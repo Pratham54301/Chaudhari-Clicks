@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chaudhari Clicks Admin Dashboard</title>
+    <title>Chaudhri Clicks Admin Dashboard</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -15,13 +16,14 @@
         <aside class="admin-sidebar">
             <div>
                 <p class="eyebrow">Control Center</p>
-                <h1>Chaudhari Clicks</h1>
+                <h1>Chaudhri Clicks</h1>
                 <p class="sidebar-copy">Update the public website without touching code.</p>
             </div>
             <nav class="sidebar-nav">
                 <button type="button" class="sidebar-link active" data-section-target="dashboard">Dashboard</button>
                 <button type="button" class="sidebar-link" data-section-target="categories">Categories</button>
                 <button type="button" class="sidebar-link" data-section-target="portfolio">Portfolio</button>
+                <button type="button" class="sidebar-link" data-section-target="pricing">Pricing</button>
                 <button type="button" class="sidebar-link" data-section-target="content">Content</button>
                 <button type="button" class="sidebar-link" data-section-target="leads">Leads</button>
                 <button type="button" class="sidebar-link" data-section-target="testimonials">Testimonials</button>
@@ -36,7 +38,7 @@
                     <h2>Admin Dashboard</h2>
                 </div>
                 <div class="topbar-actions">
-                    <a href="/" class="ghost-btn" target="_blank" rel="noreferrer">Open Website</a>
+                    <a href="/" class="ghost-btn" target="_blank" rel="noopener noreferrer">Open Website</a>
                     <button id="logoutButton" type="button" class="ghost-btn">Logout</button>
                 </div>
             </header>
@@ -155,6 +157,59 @@
                 </div>
             </section>
 
+            <section id="pricingSection" class="admin-section">
+                <div class="section-header">
+                    <div>
+                        <p class="eyebrow">Revenue Control</p>
+                        <h3>Pricing Management</h3>
+                    </div>
+                </div>
+                <div class="management-grid two-column">
+                    <form id="pricingForm" class="panel form-panel">
+                        <input type="hidden" id="pricingId">
+                        <div class="panel-header">
+                            <h4>Add or Edit Pricing Plan</h4>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label for="pricingPlanTitle">Plan name</label>
+                                <input type="text" id="pricingPlanTitle" placeholder="Premium" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="pricingPlanPrice">Price</label>
+                                <input type="text" id="pricingPlanPrice" placeholder="INR 24,999" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="pricingPlanButton">Button label</label>
+                                <input type="text" id="pricingPlanButton" placeholder="Choose Plan">
+                            </div>
+                            <div class="form-field">
+                                <label for="pricingPlanOrder">Display order</label>
+                                <input type="number" id="pricingPlanOrder" min="1" placeholder="1">
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label for="pricingPlanFeatures">Features (one per line)</label>
+                            <textarea id="pricingPlanFeatures" rows="6" placeholder="Full Day Coverage&#10;500+ Edited Photos&#10;Handcrafted Album" required></textarea>
+                        </div>
+                        <div class="inline-toggle">
+                            <input type="checkbox" id="pricingPlanFeatured">
+                            <label for="pricingPlanFeatured">Highlight as Most Popular</label>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="primary-btn">Save Pricing Plan</button>
+                            <button type="button" id="pricingReset" class="ghost-btn">Clear</button>
+                        </div>
+                    </form>
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h4>Current Pricing Plans</h4>
+                        </div>
+                        <div id="pricingList" class="pricing-admin-list"></div>
+                    </div>
+                </div>
+            </section>
+
             <section id="contentSection" class="admin-section">
                 <div class="section-header">
                     <div>
@@ -263,11 +318,6 @@
                             <label for="contactDescription">Description</label>
                             <textarea id="contactDescription" rows="3" required></textarea>
                         </div>
-                    </div>
-
-                    <div class="form-block">
-                        <h4>Pricing Cards</h4>
-                        <div id="pricingCardsEditor" class="pricing-editor-grid"></div>
                     </div>
 
                     <div class="form-actions">
@@ -401,10 +451,6 @@
                             <div class="form-field">
                                 <label for="settingsFacebook">Facebook URL</label>
                                 <input type="url" id="settingsFacebook" required>
-                            </div>
-                            <div class="form-field">
-                                <label for="settingsTwitter">Twitter URL</label>
-                                <input type="url" id="settingsTwitter" required>
                             </div>
                         </div>
                     </div>

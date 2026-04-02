@@ -138,6 +138,11 @@ select {
     transform: translateY(-2px);
 }
 
+.primary-btn.is-busy {
+    opacity: 0.78;
+    pointer-events: none;
+}
+
 .ghost-btn,
 .nav-cta {
     background: rgba(255, 255, 255, 0.03);
@@ -362,6 +367,12 @@ select {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 1.4rem;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.portfolio-grid.is-switching {
+    opacity: 0.35;
+    transform: translateY(10px);
 }
 
 .panel-empty {
@@ -536,7 +547,7 @@ select {
 
 .pricing-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 1.5rem;
 }
 
@@ -546,12 +557,23 @@ select {
     border-radius: 30px;
     padding: 2rem;
     position: relative;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.price-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(212, 175, 55, 0.26);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
 }
 
 .price-card.featured {
     border-color: rgba(212, 175, 55, 0.45);
     background: linear-gradient(180deg, rgba(212, 175, 55, 0.09), rgba(255, 255, 255, 0.03));
     transform: translateY(-12px);
+}
+
+.price-card.featured:hover {
+    transform: translateY(-16px);
 }
 
 .price-card.featured::before {
@@ -658,6 +680,20 @@ select {
     text-transform: uppercase;
     letter-spacing: 0.16em;
     margin-bottom: 0.2rem;
+}
+
+.contact-link {
+    color: var(--text);
+    font-weight: 600;
+}
+
+.contact-link:hover {
+    color: var(--gold);
+}
+
+.contact-link.is-disabled {
+    color: var(--muted);
+    pointer-events: none;
 }
 
 .icon-shell {
@@ -800,11 +836,22 @@ select {
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.08);
     color: var(--muted);
+    transition: var(--transition);
 }
 
 .social-row a:hover {
     color: var(--gold);
     border-color: rgba(212, 175, 55, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.social-row a i {
+    font-size: 1rem;
+}
+
+.social-row a[hidden] {
+    display: none;
 }
 
 .footer-base {
@@ -885,6 +932,17 @@ select {
 .site-toast.visible {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
+}
+
+.site-toast.error {
+    border-color: rgba(255, 107, 107, 0.28);
+    color: #ffd8d8;
+}
+
+.footer-links a.is-disabled,
+.instagram-handle.is-disabled {
+    color: var(--muted);
+    pointer-events: none;
 }
 
 .reveal {

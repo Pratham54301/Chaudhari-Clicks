@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chaudhari Clicks | Premium Photography Portfolio</title>
+    <title>Chaudhri Clicks | Premium Photography Portfolio</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="/styles/site.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -16,7 +18,7 @@
             <div class="loader-ring"></div>
             <div class="loader-ring delayed"></div>
             <i data-lucide="camera" class="gold-text"></i>
-            <p>Chaudhari Clicks</p>
+            <p>Chaudhri Clicks</p>
         </div>
     </div>
 
@@ -24,7 +26,7 @@
         <div class="container nav-inner">
             <a href="#home" class="logo">
                 <i data-lucide="camera" class="gold-text"></i>
-                <span>Chaudhari <span class="gold-text">Clicks</span></span>
+                <span>Chaudhri <span class="gold-text">Clicks</span></span>
             </a>
             <button id="mobileToggle" class="mobile-toggle" type="button" aria-label="Toggle navigation">
                 <i data-lucide="menu"></i>
@@ -93,7 +95,7 @@
                 <h2 class="reveal">Wedding Highlights</h2>
             </div>
             <div class="highlight-video reveal">
-                <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop" alt="Wedding highlight">
+                <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop" alt="Wedding highlight" loading="lazy" decoding="async">
                 <div class="play-badge">
                     <i data-lucide="play"></i>
                 </div>
@@ -133,7 +135,7 @@
                         </div>
                         <div>
                             <span>Call Us</span>
-                            <p id="contactPhone"></p>
+                            <a id="contactPhone" class="contact-link" href="#"></a>
                         </div>
                     </div>
                     <div class="contact-card">
@@ -142,7 +144,7 @@
                         </div>
                         <div>
                             <span>Email Us</span>
-                            <p id="contactEmail"></p>
+                            <a id="contactEmail" class="contact-link" href="#"></a>
                         </div>
                     </div>
                     <div class="contact-card">
@@ -180,22 +182,22 @@
                     <label for="message">Message</label>
                     <textarea id="message" name="message" rows="5" placeholder="Tell us about your shoot..."></textarea>
                 </div>
-                <button type="submit" class="primary-btn full-width">Send Inquiry</button>
+                <button id="bookingSubmit" type="submit" class="primary-btn full-width">Send Inquiry</button>
             </form>
         </div>
     </section>
 
     <section class="instagram-strip">
         <div class="container center instagram-header">
-            <a id="instagramHandleLink" class="instagram-handle" href="#" target="_blank" rel="noreferrer"></a>
+            <a id="instagramHandleLink" class="instagram-handle" href="#" target="_blank" rel="noopener noreferrer"></a>
         </div>
         <div class="instagram-grid">
-            <div class="instagram-item"><img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=400&auto=format&fit=crop" alt="Instagram sample one"></div>
-            <div class="instagram-item"><img src="https://images.unsplash.com/photo-1531746020798-e795c5399c5c?q=80&w=400&auto=format&fit=crop" alt="Instagram sample two"></div>
-            <div class="instagram-item"><img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=400&auto=format&fit=crop" alt="Instagram sample three"></div>
-            <div class="instagram-item"><img src="https://images.unsplash.com/photo-1520854221256-17451cc331bf?q=80&w=400&auto=format&fit=crop" alt="Instagram sample four"></div>
-            <div class="instagram-item"><img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=400&auto=format&fit=crop" alt="Instagram sample five"></div>
-            <div class="instagram-item"><img src="https://images.unsplash.com/photo-1492707892479-7bc8d5a4ee93?q=80&w=400&auto=format&fit=crop" alt="Instagram sample six"></div>
+            <div class="instagram-item"><img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=400&auto=format&fit=crop" alt="Instagram sample one" loading="lazy" decoding="async"></div>
+            <div class="instagram-item"><img src="https://images.unsplash.com/photo-1531746020798-e795c5399c5c?q=80&w=400&auto=format&fit=crop" alt="Instagram sample two" loading="lazy" decoding="async"></div>
+            <div class="instagram-item"><img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=400&auto=format&fit=crop" alt="Instagram sample three" loading="lazy" decoding="async"></div>
+            <div class="instagram-item"><img src="https://images.unsplash.com/photo-1520854221256-17451cc331bf?q=80&w=400&auto=format&fit=crop" alt="Instagram sample four" loading="lazy" decoding="async"></div>
+            <div class="instagram-item"><img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=400&auto=format&fit=crop" alt="Instagram sample five" loading="lazy" decoding="async"></div>
+            <div class="instagram-item"><img src="https://images.unsplash.com/photo-1492707892479-7bc8d5a4ee93?q=80&w=400&auto=format&fit=crop" alt="Instagram sample six" loading="lazy" decoding="async"></div>
         </div>
     </section>
 
@@ -204,18 +206,18 @@
             <div>
                 <a href="#home" class="logo">
                     <i data-lucide="camera" class="gold-text"></i>
-                    <span>Chaudhari <span class="gold-text">Clicks</span></span>
+                    <span>Chaudhri <span class="gold-text">Clicks</span></span>
                 </a>
                 <p id="footerDescription" class="muted-text footer-copy"></p>
                 <div class="social-row">
-                    <a id="footerFacebook" href="#" target="_blank" rel="noreferrer" aria-label="Facebook">
-                        <i data-lucide="facebook"></i>
+                    <a id="footerFacebook" href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                        <i class="fa-brands fa-facebook-f" aria-hidden="true"></i>
                     </a>
-                    <a id="footerTwitter" href="#" target="_blank" rel="noreferrer" aria-label="Twitter">
-                        <i data-lucide="twitter"></i>
+                    <a id="footerInstagram" href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram" aria-hidden="true"></i>
                     </a>
-                    <a id="footerInstagram" href="#" target="_blank" rel="noreferrer" aria-label="Instagram">
-                        <i data-lucide="instagram"></i>
+                    <a id="footerWhatsapp" href="#" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+                        <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
                     </a>
                 </div>
             </div>
@@ -249,7 +251,7 @@
         <img id="lightboxImage" src="" alt="Expanded portfolio image">
     </div>
 
-    <a id="whatsappLink" class="whatsapp-float" href="#" target="_blank" rel="noreferrer" aria-label="WhatsApp">
+    <a id="whatsappLink" class="whatsapp-float" href="#" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
         <i data-lucide="message-circle"></i>
     </a>
 

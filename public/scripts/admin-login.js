@@ -4,11 +4,23 @@ const loginMessage = document.getElementById("loginMessage");
 async function fetchJson(url, options = {}) {
   const response = await fetch(url, {
     credentials: "same-origin",
+    headers: {
+      Accept: "application/json",
+      ...(options.headers || {})
+    },
     ...options
   });
 
   const text = await response.text();
-  const data = text ? JSON.parse(text) : {};
+  const data = text
+    ? (() => {
+        try {
+          return JSON.parse(text);
+        } catch (_error) {
+          return {};
+        }
+      })()
+    : {};
 
   if (!response.ok) {
     throw new Error(data.message || "Request failed.");
@@ -29,9 +41,7 @@ async function checkSession() {
     if (session.authenticated) {
       window.location.replace("/admin/dashboard");
     }
-  } catch (error) {
-    console.error(error);
-  }
+  } catch (_error) {}
 }
 
 loginForm.addEventListener("submit", async (event) => {

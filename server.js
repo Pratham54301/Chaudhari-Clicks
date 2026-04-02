@@ -1,7 +1,6 @@
 const dotenv = require("dotenv");
-const connectDatabase = require("./server/config/db");
 const createApp = require("./server/app");
-const seedDefaults = require("./server/config/seedDefaults");
+const initializeApplication = require("./server/bootstrap");
 
 dotenv.config();
 
@@ -9,8 +8,7 @@ const app = createApp();
 const port = Number(process.env.PORT) || 3002;
 
 async function startServer() {
-  await connectDatabase(process.env.MONGODB_URI);
-  await seedDefaults();
+  await initializeApplication();
 
   const server = app.listen(port, () => {
     console.log(`Chaudhari Clicks is running on http://localhost:${port}`);

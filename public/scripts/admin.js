@@ -1,9 +1,12 @@
+const SYNC_EVENT_KEY = "chaudhri-clicks-sync";
+
 const q = (id) => document.getElementById(id);
 
 const state = {
   section: "dashboard",
   categories: [],
   portfolioItems: [],
+  pricingPlans: [],
   testimonials: [],
   leads: [],
   content: null,
@@ -14,16 +17,17 @@ const ui = {
   notice: q("adminNotice"),
   categoryForm: q("categoryForm"),
   portfolioForm: q("portfolioForm"),
+  pricingForm: q("pricingForm"),
   contentForm: q("contentForm"),
   settingsForm: q("settingsForm"),
   testimonialForm: q("testimonialForm"),
   categoryBody: q("categoryTableBody"),
   portfolioList: q("portfolioList"),
+  pricingList: q("pricingList"),
   leadsBody: q("leadsTableBody"),
   testimonialList: q("testimonialList"),
   dashboardStats: q("dashboardStats"),
   recentLeads: q("dashboardRecentLeads"),
-  pricingCardsEditor: q("pricingCardsEditor"),
   portfolioPreview: q("portfolioPreview"),
   portfolioCategory: q("portfolioCategory")
 };
@@ -37,9 +41,27 @@ function escapeHtml(value) {
     .replace(/'/g, "&#39;");
 }
 
+function safeJsonParse(text) {
+  if (!text) return {};
+
+  try {
+    return JSON.parse(text);
+  } catch (_error) {
+    return {};
+  }
+}
+
 function setNotice(message, type = "") {
   ui.notice.textContent = message;
   ui.notice.className = `notice ${type}`.trim();
+}
+
+function clearNotice() {
+  setNotice("");
+}
+
+function statusClass(value) {
+  return String(value || "").toLowerCase();
 }
 
 function formatDate(value) {
@@ -50,23 +72,18 @@ function formatDate(value) {
     : date.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
 }
 
-function packageFallback() {
-  return { name: "", price: "", features: [], featured: false, buttonLabel: "Choose Plan" };
-}
-
-function ensurePackages(packages) {
-  const next = Array.isArray(packages) ? [...packages] : [];
-  while (next.length < 3) next.push(packageFallback());
-  return next.slice(0, 3).map((item) => ({
-    ...packageFallback(),
-    ...item,
-    features: Array.isArray(item.features) ? item.features : []
-  }));
+function triggerSiteRefresh() {
+  try {
+    localStorage.setItem(SYNC_EVENT_KEY, String(Date.now()));
+  } catch (_error) {
+    // Ignore storage write issues.
+  }
 }
 
 function normalizePayload(data) {
   state.categories = data.categories || [];
   state.portfolioItems = data.portfolioItems || [];
+  state.pricingPlans = data.pricingPlans || [];
   state.testimonials = data.testimonials || [];
   state.leads = data.leads || [];
   state.content = {
@@ -91,9 +108,8 @@ function normalizePayload(data) {
         : [{ value: "", label: "" }, { value: "", label: "" }]
     },
     pricing: {
-      eyebrow: data.content?.pricing?.eyebrow || "",
-      title: data.content?.pricing?.title || "",
-      packages: ensurePackages(data.content?.pricing?.packages)
+      eyebrow: data.content?.pricing?.eyebrow || "Investment",
+      title: data.content?.pricing?.title || "Photography Packages"
     },
     contact: {
       eyebrow: data.content?.contact?.eyebrow || "",
@@ -110,8 +126,7 @@ function normalizePayload(data) {
     },
     social: {
       instagram: data.settings?.social?.instagram || "",
-      facebook: data.settings?.social?.facebook || "",
-      twitter: data.settings?.social?.twitter || ""
+      facebook: data.settings?.social?.facebook || ""
     },
     brand: {
       description: data.settings?.brand?.description || "",
@@ -121,19 +136,28 @@ function normalizePayload(data) {
 }
 
 async function request(url, options = {}) {
-  const response = await fetch(url, { credentials: "same-origin", ...options });
+  const response = await fetch(url, {
+    credentials: "same-origin",
+    headers: {
+      Accept: "application/json",
+      ...(options.headers || {})
+    },
+    ...options
+  });
+
   const text = await response.text();
-  const data = text ? JSON.parse(text) : {};
+  const data = safeJsonParse(text);
+
   if (response.status === 401) {
     window.location.replace("/admin");
     throw new Error("Your session has expired.");
   }
-  if (!response.ok) throw new Error(data.message || "Request failed.");
-  return data;
-}
 
-async function requestForm(url, method, body) {
-  return request(url, { method, body });
+  if (!response.ok) {
+    throw new Error(data.message || `Request failed with status ${response.status}.`);
+  }
+
+  return data;
 }
 
 function renderSection(name) {
@@ -147,13 +171,15 @@ function renderSection(name) {
 }
 
 function renderDashboard() {
-  const newLeads = state.leads.filter((lead) => lead.status === "new").length;
+  const newLeads = state.leads.filter((lead) => lead.status === "New").length;
   ui.dashboardStats.innerHTML = `
     <article class="stat-card"><span>Categories</span><strong>${state.categories.length}</strong></article>
     <article class="stat-card"><span>Portfolio Items</span><strong>${state.portfolioItems.length}</strong></article>
+    <article class="stat-card"><span>Pricing Plans</span><strong>${state.pricingPlans.length}</strong></article>
     <article class="stat-card"><span>New Leads</span><strong>${newLeads}</strong></article>
     <article class="stat-card"><span>Testimonials</span><strong>${state.testimonials.length}</strong></article>
   `;
+
   ui.recentLeads.innerHTML = state.leads.length
     ? state.leads.slice(0, 5).map((lead) => `
         <tr>
@@ -161,7 +187,7 @@ function renderDashboard() {
           <td>${escapeHtml(lead.phone)}</td>
           <td>${escapeHtml(lead.eventType)}</td>
           <td>${escapeHtml(formatDate(lead.eventDate))}</td>
-          <td><span class="badge ${escapeHtml(lead.status)}">${escapeHtml(lead.status)}</span></td>
+          <td><span class="badge ${escapeHtml(statusClass(lead.status))}">${escapeHtml(lead.status)}</span></td>
         </tr>
       `).join("")
     : `<tr><td colspan="5">No leads yet.</td></tr>`;
@@ -212,28 +238,29 @@ function renderPortfolio() {
     : "<p>No portfolio items uploaded yet.</p>";
 }
 
-function renderPricingEditor() {
-  ui.pricingCardsEditor.innerHTML = state.content.pricing.packages.map((item, index) => `
-    <article class="pricing-editor-card">
-      <h5>Package ${index + 1}</h5>
-      <div class="form-grid">
-        <div class="form-field"><label for="pricingName${index}">Name</label><input id="pricingName${index}" value="${escapeHtml(item.name)}" required></div>
-        <div class="form-field"><label for="pricingPrice${index}">Price</label><input id="pricingPrice${index}" value="${escapeHtml(item.price)}" required></div>
-        <div class="form-field"><label for="pricingButton${index}">Button label</label><input id="pricingButton${index}" value="${escapeHtml(item.buttonLabel)}" required></div>
-        <div class="form-field">
-          <label for="pricingFeatured${index}">Featured card</label>
-          <select id="pricingFeatured${index}">
-            <option value="false" ${item.featured ? "" : "selected"}>No</option>
-            <option value="true" ${item.featured ? "selected" : ""}>Yes</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-field">
-        <label for="pricingFeatures${index}">Features (one per line)</label>
-        <textarea id="pricingFeatures${index}" rows="5" required>${escapeHtml(item.features.join("\n"))}</textarea>
-      </div>
-    </article>
-  `).join("");
+function renderPricingPlans() {
+  ui.pricingList.innerHTML = state.pricingPlans.length
+    ? state.pricingPlans.map((plan) => `
+        <article class="pricing-admin-card">
+          <div class="pricing-admin-header">
+            <div>
+              <h4>${escapeHtml(plan.title)}</h4>
+              <p>${escapeHtml(plan.price)}</p>
+            </div>
+            ${plan.featured ? '<span class="featured-chip">Most Popular</span>' : ""}
+          </div>
+          <ul class="feature-list">
+            ${(Array.isArray(plan.features) ? plan.features : [])
+              .map((feature) => `<li>${escapeHtml(feature)}</li>`)
+              .join("")}
+          </ul>
+          <div class="table-actions">
+            <button type="button" class="mini-btn" data-action="edit-pricing" data-id="${escapeHtml(plan._id)}">Edit</button>
+            <button type="button" class="mini-btn danger" data-action="delete-pricing" data-id="${escapeHtml(plan._id)}">Delete</button>
+          </div>
+        </article>
+      `).join("")
+    : "<p>No pricing plans created yet.</p>";
 }
 
 function fillContentForm() {
@@ -257,9 +284,6 @@ function fillContentForm() {
   q("contactEyebrow").value = state.content.contact.eyebrow;
   q("contactTitle").value = state.content.contact.title;
   q("contactDescription").value = state.content.contact.description;
-  q("pricingEyebrow").value = state.content.pricing.eyebrow;
-  q("pricingTitle").value = state.content.pricing.title;
-  renderPricingEditor();
 }
 
 function renderLeads() {
@@ -271,10 +295,10 @@ function renderLeads() {
           <td>${escapeHtml(lead.eventType)}</td>
           <td>${escapeHtml(formatDate(lead.eventDate))}</td>
           <td>${escapeHtml((lead.message || "-").slice(0, 72))}</td>
-          <td><span class="badge ${escapeHtml(lead.status)}">${escapeHtml(lead.status)}</span></td>
+          <td><span class="badge ${escapeHtml(statusClass(lead.status))}">${escapeHtml(lead.status)}</span></td>
           <td>
             <div class="table-actions">
-              <button type="button" class="mini-btn" data-action="toggle-lead" data-id="${escapeHtml(lead._id)}" data-status="${escapeHtml(lead.status)}">${lead.status === "contacted" ? "Mark New" : "Mark Contacted"}</button>
+              <button type="button" class="mini-btn" data-action="toggle-lead" data-id="${escapeHtml(lead._id)}" data-status="${escapeHtml(lead.status)}">${lead.status === "Contacted" ? "Mark New" : "Mark Contacted"}</button>
               <button type="button" class="mini-btn danger" data-action="delete-lead" data-id="${escapeHtml(lead._id)}">Delete</button>
             </div>
           </td>
@@ -308,18 +332,20 @@ function fillSettingsForm() {
   q("settingsBrandDescription").value = state.settings.brand.description;
   q("settingsInstagram").value = state.settings.social.instagram;
   q("settingsFacebook").value = state.settings.social.facebook;
-  q("settingsTwitter").value = state.settings.social.twitter;
 }
 
 function renderAll() {
   renderDashboard();
   renderCategories();
   renderPortfolio();
+  renderPricingPlans();
   fillContentForm();
   renderLeads();
   renderTestimonials();
   fillSettingsForm();
-  lucide.createIcons();
+  if (window.lucide && typeof window.lucide.createIcons === "function") {
+    window.lucide.createIcons();
+  }
 }
 
 function resetCategoryForm() {
@@ -335,6 +361,16 @@ function resetPortfolioForm() {
   renderPortfolioPreview("");
 }
 
+function resetPricingForm() {
+  q("pricingId").value = "";
+  q("pricingPlanTitle").value = "";
+  q("pricingPlanPrice").value = "";
+  q("pricingPlanButton").value = "Choose Plan";
+  q("pricingPlanOrder").value = "";
+  q("pricingPlanFeatures").value = "";
+  q("pricingPlanFeatured").checked = false;
+}
+
 function resetTestimonialForm() {
   q("testimonialId").value = "";
   q("testimonialQuote").value = "";
@@ -342,14 +378,9 @@ function resetTestimonialForm() {
   q("testimonialRole").value = "";
 }
 
-function applyResponse(data, message) {
-  normalizePayload(data);
-  renderAll();
-  if (message) setNotice(message, "success");
-}
-
 async function loadBootstrap() {
-  applyResponse(await request("/api/admin/bootstrap"));
+  normalizePayload(await request("/api/admin/bootstrap"));
+  renderAll();
 }
 
 function buildContentPayload() {
@@ -376,15 +407,8 @@ function buildContentPayload() {
       ]
     },
     pricing: {
-      eyebrow: q("pricingEyebrow").value.trim(),
-      title: q("pricingTitle").value.trim(),
-      packages: [0, 1, 2].map((index) => ({
-        name: q(`pricingName${index}`).value.trim(),
-        price: q(`pricingPrice${index}`).value.trim(),
-        buttonLabel: q(`pricingButton${index}`).value.trim(),
-        featured: q(`pricingFeatured${index}`).value === "true",
-        features: q(`pricingFeatures${index}`).value.split("\n").map((item) => item.trim()).filter(Boolean)
-      }))
+      eyebrow: state.content.pricing.eyebrow,
+      title: state.content.pricing.title
     },
     contact: {
       eyebrow: q("contactEyebrow").value.trim(),
@@ -404,8 +428,7 @@ function buildSettingsPayload() {
     },
     social: {
       instagram: q("settingsInstagram").value.trim(),
-      facebook: q("settingsFacebook").value.trim(),
-      twitter: q("settingsTwitter").value.trim()
+      facebook: q("settingsFacebook").value.trim()
     },
     brand: {
       description: q("settingsBrandDescription").value.trim(),
@@ -414,26 +437,53 @@ function buildSettingsPayload() {
   };
 }
 
-async function deleteResource(url, message) {
-  applyResponse(await request(url, { method: "DELETE" }), message);
+function buildPricingPayload() {
+  return {
+    title: q("pricingPlanTitle").value.trim(),
+    price: q("pricingPlanPrice").value.trim(),
+    buttonLabel: q("pricingPlanButton").value.trim() || "Choose Plan",
+    order: q("pricingPlanOrder").value ? Number(q("pricingPlanOrder").value) : undefined,
+    featured: q("pricingPlanFeatured").checked,
+    features: q("pricingPlanFeatures").value
+      .split("\n")
+      .map((item) => item.trim())
+      .filter(Boolean)
+  };
+}
+
+async function afterMutation(message, resetFn) {
+  await loadBootstrap();
+  if (typeof resetFn === "function") resetFn();
+  setNotice(message, "success");
+  triggerSiteRefresh();
+}
+
+async function deleteResource(url, message, resetFn) {
+  await request(url, { method: "DELETE" });
+  await afterMutation(message, resetFn);
 }
 
 function findPortfolio(id) {
   return state.portfolioItems.find((item) => item.id === id);
 }
 
+function findPricingPlan(id) {
+  return state.pricingPlans.find((plan) => plan._id === id);
+}
+
 function bindForms() {
   ui.categoryForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+    clearNotice();
+
     try {
       const id = q("categoryId").value.trim();
-      const data = await request(id ? `/api/admin/categories/${id}` : "/api/admin/categories", {
+      await request(id ? `/api/admin/categories/${id}` : "/api/admin/categories", {
         method: id ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: q("categoryName").value.trim() })
       });
-      applyResponse(data, "Category saved successfully.");
-      resetCategoryForm();
+      await afterMutation("Category saved successfully.", resetCategoryForm);
     } catch (error) {
       setNotice(error.message, "error");
     }
@@ -443,17 +493,28 @@ function bindForms() {
 
   ui.portfolioForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+    clearNotice();
+
     const id = q("portfolioId").value.trim();
     const file = q("portfolioImage").files[0];
-    if (!id && !file) return setNotice("Please upload an image for the new portfolio item.", "error");
+
+    if (!id && !file) {
+      setNotice("Please upload an image for the new portfolio item.", "error");
+      return;
+    }
+
     try {
       const body = new FormData();
       body.append("title", q("portfolioTitle").value.trim());
       body.append("categoryId", q("portfolioCategory").value);
       if (file) body.append("image", file);
-      const data = await requestForm(id ? `/api/admin/portfolio/${id}` : "/api/admin/portfolio", id ? "PUT" : "POST", body);
-      applyResponse(data, "Portfolio item saved successfully.");
-      resetPortfolioForm();
+
+      await request(id ? `/api/admin/portfolio/${id}` : "/api/admin/portfolio", {
+        method: id ? "PUT" : "POST",
+        body
+      });
+
+      await afterMutation("Portfolio item saved successfully.", resetPortfolioForm);
     } catch (error) {
       setNotice(error.message, "error");
     }
@@ -463,19 +524,42 @@ function bindForms() {
   q("portfolioImage").addEventListener("change", () => {
     const file = q("portfolioImage").files[0];
     if (!file) return renderPortfolioPreview("");
+
     const reader = new FileReader();
     reader.onload = () => renderPortfolioPreview(reader.result);
     reader.readAsDataURL(file);
   });
 
+  ui.pricingForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    clearNotice();
+
+    try {
+      const id = q("pricingId").value.trim();
+      await request(id ? `/api/admin/pricing/${id}` : "/api/admin/pricing", {
+        method: id ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(buildPricingPayload())
+      });
+      await afterMutation("Pricing plan saved successfully.", resetPricingForm);
+    } catch (error) {
+      setNotice(error.message, "error");
+    }
+  });
+
+  q("pricingReset").addEventListener("click", resetPricingForm);
+
   ui.contentForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+    clearNotice();
+
     try {
-      applyResponse(await request("/api/admin/content", {
+      await request("/api/admin/content", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(buildContentPayload())
-      }), "Website content updated successfully.");
+      });
+      await afterMutation("Website content updated successfully.");
     } catch (error) {
       setNotice(error.message, "error");
     }
@@ -483,12 +567,15 @@ function bindForms() {
 
   ui.settingsForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+    clearNotice();
+
     try {
-      applyResponse(await request("/api/admin/settings", {
+      await request("/api/admin/settings", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(buildSettingsPayload())
-      }), "Settings saved successfully.");
+      });
+      await afterMutation("Settings saved successfully.");
     } catch (error) {
       setNotice(error.message, "error");
     }
@@ -496,9 +583,11 @@ function bindForms() {
 
   ui.testimonialForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+    clearNotice();
+
     try {
       const id = q("testimonialId").value.trim();
-      const data = await request(id ? `/api/admin/testimonials/${id}` : "/api/admin/testimonials", {
+      await request(id ? `/api/admin/testimonials/${id}` : "/api/admin/testimonials", {
         method: id ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -507,8 +596,7 @@ function bindForms() {
           role: q("testimonialRole").value.trim()
         })
       });
-      applyResponse(data, "Testimonial saved successfully.");
-      resetTestimonialForm();
+      await afterMutation("Testimonial saved successfully.", resetTestimonialForm);
     } catch (error) {
       setNotice(error.message, "error");
     }
@@ -516,7 +604,11 @@ function bindForms() {
 
   q("testimonialReset").addEventListener("click", resetTestimonialForm);
   q("logoutButton").addEventListener("click", async () => {
-    try { await request("/api/auth/logout", { method: "POST" }); } finally { window.location.replace("/admin"); }
+    try {
+      await request("/api/auth/logout", { method: "POST" });
+    } finally {
+      window.location.replace("/admin");
+    }
   });
 }
 
@@ -528,46 +620,90 @@ function bindActions() {
   ui.categoryBody.addEventListener("click", async (event) => {
     const button = event.target.closest("button[data-action]");
     if (!button) return;
+
     const category = state.categories.find((item) => item._id === button.dataset.id);
+
     if (button.dataset.action === "edit-category" && category) {
       q("categoryId").value = category._id;
       q("categoryName").value = category.name;
       renderSection("categories");
     }
+
     if (button.dataset.action === "delete-category" && window.confirm("Delete this category?")) {
-      try { await deleteResource(`/api/admin/categories/${button.dataset.id}`, "Category deleted successfully."); resetCategoryForm(); } catch (error) { setNotice(error.message, "error"); }
+      try {
+        await deleteResource(`/api/admin/categories/${button.dataset.id}`, "Category deleted successfully.", resetCategoryForm);
+      } catch (error) {
+        setNotice(error.message, "error");
+      }
     }
   });
 
   ui.portfolioList.addEventListener("click", async (event) => {
     const button = event.target.closest("button[data-action]");
     if (!button) return;
+
     if (button.dataset.action === "edit-portfolio") {
       const item = findPortfolio(button.dataset.id);
       if (!item) return;
+
       q("portfolioId").value = item.id;
       q("portfolioTitle").value = item.title;
       q("portfolioCategory").value = item.category ? item.category.id : "";
       renderPortfolioPreview(item.imageUrl);
       renderSection("portfolio");
     }
+
     if (button.dataset.action === "delete-portfolio" && window.confirm("Delete this portfolio item?")) {
-      try { await deleteResource(`/api/admin/portfolio/${button.dataset.id}`, "Portfolio item deleted successfully."); resetPortfolioForm(); } catch (error) { setNotice(error.message, "error"); }
+      try {
+        await deleteResource(`/api/admin/portfolio/${button.dataset.id}`, "Portfolio item deleted successfully.", resetPortfolioForm);
+      } catch (error) {
+        setNotice(error.message, "error");
+      }
+    }
+  });
+
+  ui.pricingList.addEventListener("click", async (event) => {
+    const button = event.target.closest("button[data-action]");
+    if (!button) return;
+
+    if (button.dataset.action === "edit-pricing") {
+      const plan = findPricingPlan(button.dataset.id);
+      if (!plan) return;
+
+      q("pricingId").value = plan._id;
+      q("pricingPlanTitle").value = plan.title;
+      q("pricingPlanPrice").value = plan.price;
+      q("pricingPlanButton").value = plan.buttonLabel || "Choose Plan";
+      q("pricingPlanOrder").value = plan.order || "";
+      q("pricingPlanFeatures").value = (plan.features || []).join("\n");
+      q("pricingPlanFeatured").checked = Boolean(plan.featured);
+      renderSection("pricing");
+    }
+
+    if (button.dataset.action === "delete-pricing" && window.confirm("Delete this pricing plan?")) {
+      try {
+        await deleteResource(`/api/admin/pricing/${button.dataset.id}`, "Pricing plan deleted successfully.", resetPricingForm);
+      } catch (error) {
+        setNotice(error.message, "error");
+      }
     }
   });
 
   ui.leadsBody.addEventListener("click", async (event) => {
     const button = event.target.closest("button[data-action]");
     if (!button) return;
+
     try {
       if (button.dataset.action === "toggle-lead") {
-        const nextStatus = button.dataset.status === "contacted" ? "new" : "contacted";
-        applyResponse(await request(`/api/admin/leads/${button.dataset.id}`, {
-          method: "PATCH",
+        const nextStatus = button.dataset.status === "Contacted" ? "New" : "Contacted";
+        await request(`/api/admin/leads/${button.dataset.id}`, {
+          method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ status: nextStatus })
-        }), "Lead status updated successfully.");
+        });
+        await afterMutation("Lead status updated successfully.");
       }
+
       if (button.dataset.action === "delete-lead" && window.confirm("Delete this lead?")) {
         await deleteResource(`/api/admin/leads/${button.dataset.id}`, "Lead deleted successfully.");
       }
@@ -579,7 +715,9 @@ function bindActions() {
   ui.testimonialList.addEventListener("click", async (event) => {
     const button = event.target.closest("button[data-action]");
     if (!button) return;
+
     const item = state.testimonials.find((entry) => entry._id === button.dataset.id);
+
     if (button.dataset.action === "edit-testimonial" && item) {
       q("testimonialId").value = item._id;
       q("testimonialQuote").value = item.quote;
@@ -587,8 +725,13 @@ function bindActions() {
       q("testimonialRole").value = item.role || "";
       renderSection("testimonials");
     }
+
     if (button.dataset.action === "delete-testimonial" && window.confirm("Delete this testimonial?")) {
-      try { await deleteResource(`/api/admin/testimonials/${button.dataset.id}`, "Testimonial deleted successfully."); resetTestimonialForm(); } catch (error) { setNotice(error.message, "error"); }
+      try {
+        await deleteResource(`/api/admin/testimonials/${button.dataset.id}`, "Testimonial deleted successfully.", resetTestimonialForm);
+      } catch (error) {
+        setNotice(error.message, "error");
+      }
     }
   });
 }
@@ -597,15 +740,20 @@ async function init() {
   bindForms();
   bindActions();
   renderSection(state.section);
+
   try {
     await loadBootstrap();
     resetPortfolioForm();
     resetCategoryForm();
+    resetPricingForm();
     resetTestimonialForm();
   } catch (error) {
     setNotice(error.message, "error");
   }
-  lucide.createIcons();
+
+  if (window.lucide && typeof window.lucide.createIcons === "function") {
+    window.lucide.createIcons();
+  }
 }
 
 init();

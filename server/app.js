@@ -9,11 +9,11 @@ const pageRoutes = require("./routes/pageRoutes");
 const errorHandler = require("./middleware/errorHandler");
 const notFound = require("./middleware/notFound");
 
-function createApp() {
+function createApp(options = {}) {
+  const { ensureReady } = options;
   const app = express();
   const rootDir = path.join(__dirname, "..");
-  const clientDir = path.join(rootDir, "client");
-  const publicDir = path.join(clientDir, "public");
+  const publicDir = path.join(rootDir, "public");
   const uploadDir = path.join(rootDir, "uploads");
   const isProduction = process.env.NODE_ENV === "production";
 
@@ -45,6 +45,14 @@ function createApp() {
       }
     })
   );
+
+  if (typeof ensureReady === "function") {
+    app.use((req, res, next) => {
+      Promise.resolve(ensureReady())
+        .then(() => next())
+        .catch(next);
+    });
+  }
 
   app.use(
     express.static(publicDir, {
